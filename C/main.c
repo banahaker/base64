@@ -14,7 +14,11 @@ int main() {
 
     printf("Encode: %s\n", encoded);
   } else if (mode == 1) {
-    printf("Wait a minute...\n");
+    char input[999];
+    printf("Please input the string to decode: ");
+    scanf("%s", input);
+    char *decoded = base64_decoder(input, strlen(input));
+    printf("Decoded: %s\n", decoded);
   } else {
     printf("fuck off\n");
   }
