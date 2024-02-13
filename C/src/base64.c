@@ -1,20 +1,7 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-char *base64_encoder(const char *data, size_t len);
-
-static const char *encoding =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-int main() {
-  printf("Hello, world!\n");
-  printf("%s\n", base64_encoder("Hello, world!", 13));
-  return 0;
-}
-
+#include "../includes/base64.h"
 char *base64_encoder(const char *data, size_t len) {
   size_t out_len = (len + 2) / 3 * 4;
+
   char *out = malloc(out_len + 1);
   size_t i, j;
 
