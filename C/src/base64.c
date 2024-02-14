@@ -51,28 +51,26 @@ char *base64_decoder(const char *data, size_t len) {
     out_len--;
 
   char *out = malloc(out_len + 1);
+  unsigned now = 0;
   if (!out)
     return NULL;
 
-  int decoding_table[256];
-  for (int i = 0; i < 64; i++)
-    decoding_table[(unsigned char)base64_table[i]] = i;
-
-  size_t i, j;
-  for (i = 0, j = 0; i < len; i += 4) {
-    uint32_t n =
-        (decoding_table[(unsigned char)data[i]] << 18) |
-        (decoding_table[(unsigned char)data[i + 1]] << 12) |
-        (data[i + 2] == '=' ? 0
-                            : decoding_table[(unsigned char)data[i + 2]] << 6) |
-        (data[i + 3] == '=' ? 0 : decoding_table[(unsigned char)data[i + 3]]);
-    out[j++] = (n >> 16) & 0xFF;
-    if (data[i + 2] != '=')
-      out[j++] = (n >> 8) & 0xFF;
-    if (data[i + 3] != '=')
-      out[j++] = n & 0xFF;
+  unsigned buffer = 0;
+  unsigned buf_size = 0;
+  for (size_t i = 0; i < len; i++) {
+    if (data[i] == '=')
+      break;
+    for (size_t j = 0; j < 64; j++) {
+      if (data[i] == base64_table[j]) {
+        buffer = (buffer << 6) + j;
+        buf_size += 6;
+      }
+      if (buf_size >= 8) {
+        out[now++] = (char)(buffer >> (buf_size - 8));
+        buf_size -= 8;
+      }
+    }
   }
-
   out[out_len] = '\0';
   return out;
 }
