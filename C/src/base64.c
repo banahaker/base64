@@ -1,4 +1,5 @@
 #include "../includes/base64.h"
+#include <stdint.h>
 char *base64_encoder(const char *data, size_t len) {
   size_t out_len = (len + 2) / 3 * 4;
 
@@ -60,15 +61,12 @@ char *base64_decoder(const char *data, size_t len) {
   for (size_t i = 0; i < len; i++) {
     if (data[i] == '=')
       break;
-    for (size_t j = 0; j < 64; j++) {
-      if (data[i] == base64_table[j]) {
-        buffer = (buffer << 6) + j;
-        buf_size += 6;
-      }
-      if (buf_size >= 8) {
-        out[now++] = (char)(buffer >> (buf_size - 8));
-        buf_size -= 8;
-      }
+    uint8_t t = decodingTable[data[i]];
+    buffer = (buffer << 6) + t;
+    buf_size += 6;
+    if (buf_size >= 8) {
+      out[now++] = (char)(buffer >> (buf_size - 8));
+      buf_size -= 8;
     }
   }
   out[out_len] = '\0';
